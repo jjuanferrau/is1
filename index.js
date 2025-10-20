@@ -115,15 +115,23 @@ app.post('/api/loginCliente', (req, res) => {
 
     docClient.scan(paramsScan, function(err, data) {
         if (err) {
+            console.error("DEBUG: Error de DynamoDB:", err); // <-- LOG DE ERROR DE BD
             return res.status(500).send(JSON.stringify({ response: "ERROR", message: "DB access error " + err }));
         }
 
+        // --- ESTE ES EL PUNTO CLAVE ---
         if (data.Items.length !== 1) {
+            // --- NUEVO LOG ---
+            console.error(`DEBUG: 🚫 Usuario NO encontrado. Items.length: ${data.Items.length} para el email: ${email}`);
             return res.status(401).send(JSON.stringify({ response: "ERROR", message: "Credenciales inválidas" }));
         }
 
+        // Si llegamos aquí, el usuario SÍ se encontró
         const clienteEncontrado = data.Items[0];
+        console.log(`DEBUG: ✅ Usuario SÍ encontrado: ${clienteEncontrado.contacto}`); // --- NUEVO LOG ---
+
         if (password === clienteEncontrado.password) {
+            // El login fue exitoso...
             if (clienteEncontrado.activo === true) {
                 res.status(200).send(JSON.stringify({
                     response: "OK",
@@ -133,9 +141,14 @@ app.post('/api/loginCliente', (req, res) => {
                     "fecha_ultimo_ingreso": clienteEncontrado.fecha_ultimo_ingreso
                 }));
             } else {
+                console.error("DEBUG: ⚠️ Usuario encontrado pero NO ACTIVO."); // --- NUEVO LOG ---
                 res.status(403).send(JSON.stringify({ response: "ERROR", message: "Cliente no activo" }));
             }
         } else {
+            // --- NUEVO LOG ---
+            console.error(`DEBUG: 🔑 Contraseña INCORRECTA.`);
+            console.error(`     -> Enviada:   [${password}]`);
+            console.error(`     -> Esperada: [${clienteEncontrado.password}]`);
             res.status(401).send(JSON.stringify({ response: "ERROR", message: "Credenciales inválidas" }));
         }
     });
