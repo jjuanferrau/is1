@@ -68,7 +68,7 @@ switch (query.mode) {
     console.log("API_listarTicket:"+RESTAPI.listarTicket); 
   
     ticket = {
-       "ID" : query.id,
+       "clienteID" : query.id, // <--- LÍNEA CORREGIDA
     };
     
     options = {

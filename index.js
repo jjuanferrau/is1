@@ -90,6 +90,7 @@ app.post('/api/getCliente/:id', (req, res) => {
             res.status(400).send(JSON.stringify({ response: "ERROR", message: "DB access error " + err }));
         } else {
             if (Object.keys(data).length !== 0) {
+                delete data.Item.password;
                 res.status(200).send(JSON.stringify({ "response": "OK", "cliente": data.Item }), null, 2);
             } else {
                 res.status(404).send(JSON.stringify({ "response": "ERROR", message: "Cliente no existe" }), null, 2);
@@ -123,7 +124,7 @@ app.post('/api/loginCliente', (req, res) => {
         if (data.Items.length !== 1) {
             // --- NUEVO LOG ---
             console.error(`DEBUG: 🚫 Usuario NO encontrado. Items.length: ${data.Items.length} para el email: ${email}`);
-            return res.status(401).send(JSON.stringify({ response: "ERROR", message: "Credenciales inválidas" }));
+            return res.status(401).send(JSON.stringify({ response: "invalido", message: "Credenciales inválidas" }));
         }
 
         // Si llegamos aquí, el usuario SÍ se encontró
@@ -142,14 +143,14 @@ app.post('/api/loginCliente', (req, res) => {
                 }));
             } else {
                 console.error("DEBUG: ⚠️ Usuario encontrado pero NO ACTIVO."); // --- NUEVO LOG ---
-                res.status(403).send(JSON.stringify({ response: "ERROR", message: "Cliente no activo" }));
+                res.status(403).send(JSON.stringify({ response: "invalido", message: "Cliente no activo" }));
             }
         } else {
             // --- NUEVO LOG ---
             console.error(`DEBUG: 🔑 Contraseña INCORRECTA.`);
             console.error(`     -> Enviada:   [${password}]`);
             console.error(`     -> Esperada: [${clienteEncontrado.password}]`);
-            res.status(401).send(JSON.stringify({ response: "ERROR", message: "Credenciales inválidas" }));
+            res.status(401).send(JSON.stringify({ response: "invalido", message: "Credenciales inválidas" }));
         }
     });
 });
