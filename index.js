@@ -263,6 +263,79 @@ app.post('/api/resetCliente', (req, res) => {
 });
 
 
+// Ruta para actualizar contraseña usando el Email del cliente
+app.post('/api/updatePasswordByEmail', async (req, res) => {
+    const { email, password } = req.body;
+    console.log(`Solicitud para restablecer contraseña del email: ${email}`);
+
+    if (!email || !password) {
+        return res.status(400).send(JSON.stringify({ 
+            response: "ERROR", 
+            message: "Email y Password son requeridos" 
+        }));
+    }
+
+    try {
+        // Paso 1: Buscar al cliente por su email (reutilizamos tu función 'scanDb')
+        const resultDb = await scanDb(email);
+
+        if (Object.keys(resultDb).length === 0) {
+            // Si no se encuentra el email, informamos el error
+            return res.status(404).send(JSON.stringify({ 
+                response: "ERROR", 
+                message: "Email no registrado en el sistema" 
+            }));
+        }
+
+        // Paso 2: Si el cliente existe, obtenemos su ID
+        const cliente = resultDb[0];
+        const clienteId = cliente.id;
+        console.log(`Email ${email} corresponde al ID: ${clienteId}`);
+
+        // Paso 3: Actualizamos la contraseña usando el ID
+        const paramsUpdate = {
+            TableName: "cliente",
+            Key: { "id": clienteId },
+            UpdateExpression: "SET #p = :p, #fcp = :fcp", // Actualiza pass y fecha de cambio
+            ExpressionAttributeNames: { 
+                "#p": "password",
+                "#fcp": "fecha_cambio_password"
+            },
+            ExpressionAttributeValues: { 
+                ":p": password,
+                ":fcp": new Date().toLocaleDateString('es-AR') // Actualiza la fecha
+            },
+            ReturnValues: "NONE",
+            ConditionExpression: 'attribute_exists(id)'
+        };
+
+        docClient.update(paramsUpdate, function(err, data) {
+            if (err) {
+                console.error("Error al actualizar la contraseña en DynamoDB:", err);
+                res.status(500).send(JSON.stringify({ 
+                    response: "ERROR", 
+                    message: "Error en la base de datos al actualizar" 
+                }));
+            } else {
+                console.log("Contraseña actualizada con éxito para el ID:", clienteId);
+                res.status(200).send(JSON.stringify({ 
+                    response: "OK", 
+                    message: "Contraseña actualizada con éxito" 
+                }));
+            }
+        });
+
+    } catch (scanErr) {
+        console.error("Error durante el escaneo de email:", scanErr);
+        res.status(500).send(JSON.stringify({ 
+            response: "ERROR", 
+            message: "Error interno al buscar el email" 
+        }));
+    }
+});
+
+
+
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
  * API REST Ticket                               *
  *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
