@@ -46,7 +46,7 @@ async function scanDb(contacto) {
     const paramsScan = {
         TableName: "cliente",
         FilterExpression: 'contacto = :contacto_val', // Corregido para buscar por 'contacto'
-        ExpressionAttributeValues: { ':contacto': contacto }
+        ExpressionAttributeValues: { ':contacto_val': contacto }
     };
     var objectPromise = await docClient.scan(paramsScan).promise().then((data) => {
         return data.Items;
