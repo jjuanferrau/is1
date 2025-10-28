@@ -1,4 +1,3 @@
-/* ... (todo tu código @font-face va aquí arriba) ... */
 /* montserrat-100 - latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
@@ -158,7 +157,7 @@ form.form {
     border: 1px solid #afafaf; 
     border-radius: 10px;
     background-color: #d8f7cf;
-    margin: 0 auto; /* <-- CENTRA EL BLOQUE DEL FORMULARIO */
+    margin: 0 auto;
 }
 
 input { 
@@ -186,60 +185,37 @@ input {
     height: 150px;
 }
 
-/* NOTA: El HTML usa etiquetas <center> que están obsoletas. 
-  Para centrar contenido modernamente, se recomienda usar CSS 
-  (por ejemplo: text-align: center; o display: flex; justify-content: center;).
-*/
-
-/* ===================================================================== */
-/* === NUEVOS ESTILOS AÑADIDOS (del listarTicket.html) === */
-/* ===================================================================== */
-
 ul.breadcrumb {
     padding: 10px 16px;
     list-style: none;
     background-color: #eee;
 }
 
-/* Display list items side by side */
 ul.breadcrumb li {
     display: inline;
     font-size: 18px;
 }
 
-/* Add a slash symbol (/) before/behind each list item */
 ul.breadcrumb li+li:before {
     padding: 8px;
     color: #000;
     content: "/\00a0";
 }
 
-/* Add a color to all links inside the list */
 ul.breadcrumb li a {
     color: #0275d8;
     text-decoration: none;
 }
 
-/* Add a color on mouse-over */
 ul.breadcrumb li a:hover {
     color: #0275d8;
     text-decoration: underline;
 }
 
-/* ===================================================================== */
-/* === REGLAS DE ALINEACIÓN FINAL === */
-/* ===================================================================== */
-
-/* Esta regla centra el <div> del botón Y el <div> del enlace,
-ya que ambos tienen la clase ".contenedor-boton" en el HTML.
-*/
 .contenedor-boton {
     text-align: center;
 }
 
-/* Las reglas conflictivas de antes (como tr.celda-centrada)
-han sido ELIMINADAS.
-*/
 button {
     border: 1px solid #afafaf;
     border-radius: 3px;

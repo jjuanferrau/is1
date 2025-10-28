@@ -6,7 +6,7 @@ const resultadoSpan = document.getElementById('resultado');
 formE1.addEventListener('submit', (event) => {
     // Evitamos que la página se recargue
     event.preventDefault();
-    resultadoSpan.textContent = ''; // Limpiamos mensajes anteriores
+    resultadoSpan.textContent = '';
 
     // 3. Obtenemos los datos del formulario
     const formData = new FormData(formE1);
@@ -26,7 +26,6 @@ formE1.addEventListener('submit', (event) => {
     }
 
     // 5. Preparamos los datos para enviar a la API
-    // (Tu API espera 'contacto' en lugar de 'email')
     const dataParaAPI = {
         nombre: data.nombre,
         contacto: data.email, 
@@ -41,7 +40,7 @@ formE1.addEventListener('submit', (event) => {
         body: JSON.stringify(dataParaAPI),
     };
 
-    // 6. Hacemos la llamada 'fetch' a tu API de Node.js
+    // 6. Hacemos la llamada 'fetch' a la API de Node.js
     fetch('http://localhost:8080/api/addCliente', options)
         .then(res => res.json())
         .then(response => {
