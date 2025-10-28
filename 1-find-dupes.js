@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
-import accessKeyId from '../accessKeyId.js'; // Revisa que esta ruta sea correcta
-import secretAccessKey from '../secretAccessKey.js'; // Revisa que esta ruta sea correcta
+import accessKeyId from '../accessKeyId.js';
+import secretAccessKey from '../secretAccessKey.js';
 
 // Configura las claves
 AWS.config.update({
@@ -11,11 +11,7 @@ AWS.config.update({
 });
 let docClient = new AWS.DynamoDB.DocumentClient();
 
-// ----------------------------------------------------
-// 1. EDITA ESTA LÍNEA CON EL EMAIL DUPLICADO
-// ----------------------------------------------------
 const emailBuscado = "colla.pedro@uader.edu.ar";
-// ----------------------------------------------------
 
 const paramsScan = {
     TableName: "cliente",

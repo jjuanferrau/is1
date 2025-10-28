@@ -24,7 +24,7 @@ formE1.addEventListener('submit', (event) => {
 		return;
 	}
 
-	if (data.email == 'pec') {   /*--Fix hecho por  Germán Lombardi IS1-2025 */
+	if (data.email == 'pec') {
 		console.log('pec no es bienvenido en éste sistema');
 		const m = '<li>El usuario <pec> no es bienvenido en éste sistema</li>';
 		document.getElementById('resultado2').style.color = 'RED';
@@ -184,9 +184,9 @@ formE1.addEventListener('submit', (event) => {
 					'&mode=' + MODE;
 			} else {
 				console.log('La password no es correcta');
-				document.getElementById('resultado1').style.color = 'RED'; /*--Fix hecho por  Germán Lombardi IS1-2025 */
+				document.getElementById('resultado1').style.color = 'RED'; 
 				document.getElementById('resultado1').textContent =
-					'Error de login, intente nuevamente';                  /*--Fix hecho por  Germán Lombardi IS1-2025 */
+					'Error de login, intente nuevamente';                  
 			}
 		});
 });
