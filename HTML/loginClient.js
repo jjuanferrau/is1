@@ -68,8 +68,9 @@ formE1.addEventListener('submit', (event) => {
 /*-----
     Define el URI para realizar el acceso en base al acceso a un servidor local
     Esta variable 'MODE' se usa para cambiar entre entornos de prueba
-    const MODE='LOCAL'; /*-- Instrucción a cambiar opciones LOCAL, TYPICODE o AWS --*/
 
+ 	/*-- Instrucción a cambiar opciones LOCAL, TYPICODE o AWS --*/
+    const MODE='LOCAL';
 	if (MODE == 'LOCAL') {  //Si el modo es 'LOCAL', prepara la llamada a nuestro servidor
 	
 		/// Prepara el objeto de datos que se enviará al servidor

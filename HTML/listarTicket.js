@@ -37,26 +37,22 @@ console.log("Comienza listarTicket.js");
 // Llama a la función anterior para "parsear" la query string de la URL actual
 // document.location.search es la parte de la URL que empieza con '?'
 var query = getQueryParams(document.location.search);
-
-// Muestra en la consola los valores extraídos. Muy útil para depurar (debug).
+// Muestra en la consola los datos leídos de la URL
 console.log("id:"+query.id);
 console.log("contacto:"+query.contacto);
 console.log("ultima_fecha:"+query.fecha_ultimo_ingreso);
 console.log("mode:"+query.mode);
 
-// Modifica el contenido HTML de un elemento con id "lastlogin" en tu página.
-// Inserta una tabla HTML para mostrar la información del cliente.
+// Busca el elemento HTML con id "lastlogin" y le inserta una tabla
+// mostrando la información del usuario leída de la URL.
 document.getElementById("lastlogin").innerHTML = "<table><tr><td>Cliente</td><td>"+query.id+"</td></tr><tr><td>Contacto</td><td>"+query.contacto+"</td></tr></tr><tr><td>Ultimo ingreso</td><td>"+query.fecha_ultimo_ingreso+"</td></tr></table>";
 
-
-// --- Configuración de URLs ---
-// Objeto que guarda las URLs de navegación *dentro* de tu sitio web
+// Define las URLs del Frontend (las páginas HTML)
 const systemURL={ 
     listarTicket    : "http://127.0.0.1:5500/HTML/listarTicket.html",
     loginCliente    : "http://127.0.0.1:5500/HTML/loginClient.html",
 };
-
-// Objeto que guarda las URLs de los *servidores* (APIs) de donde se obtienen los datos
+// Define las URLs del Backend (la API en el servidor)
 const RESTAPI={
     loginCliente    : "http://127.0.0.1:8080/api/loginCliente",
     listarTicket    : "http://localhost:8080/api/listarTicket",
@@ -68,39 +64,35 @@ LOCAL (Tu propia PC)
 TYPICODE (Un servicio de simulación de APIs)
 AWS (Amazon Web Services, un servidor en la nube)
 */
-
-// Busca en el HTML el elemento con id "app". Aquí es donde se insertará la tabla de tickets.
+// Busca el elemento HTML con id "app" (donde se mostrará la tabla de tickets)
 const HTMLResponse=document.querySelector("#app");
 
-// Prepara un objeto 'ticket' inicial. (Solo se usa para el modo LOCAL)
+// Declara un objeto 'ticket' (se usará para enviar datos en POST si es LOCAL)
 var ticket = {
     "ID" : query.id,
 };
-    
-// Prepara un objeto 'options' inicial para la llamada 'fetch'.
-// Por defecto, asume que será una petición GET (solo obtener datos).
+
+// Declara un objeto 'options' para el fetch (se inicializa para GET)
 var options = {
     method: 'GET',
     };
-var APIREST_URL=''; // Variable para guardar la URL de la API que se usará.
+    // Declara la variable para la URL de la API que se usará
+var APIREST_URL='';
+
+// Muestra en consola el modo recibido de la URL
 console.log('transferred mode:'+query.mode);    
 
-// --- Selector de Entorno (Ambiente) ---
-// Este 'switch' es el cerebro del código: decide a qué servidor llamar
-// basándose en el parámetro "mode" de la URL.
+// Estructura 'switch' para decidir qué API llamar según el 'mode' recibido de la URL
 switch (query.mode) {
   case "LOCAL":
     // Si mode=LOCAL (desarrollo en tu PC)
     console.log("Utiliza servidor NodeJS local.");
     console.log("API_listarTicket:"+RESTAPI.listarTicket); 
-  
-    // Prepara el objeto 'ticket' específico para la API local
+  // Corrige el objeto 'ticket' para que tenga 'clienteID' como espera la API local
     ticket = {
        "clienteID" : query.id, 
     };
-    
-    // Sobrescribe las 'options' porque la API local espera un método POST
-    // (enviar datos en lugar de solo pedir).
+    // Configura las 'options' para hacer una llamada POST (enviar datos)
     options = {
        method: 'POST',
        headers: {
@@ -159,15 +151,18 @@ fetch(`${APIREST_URL}`,options)
     // Recorre el array 'data' que vino dentro de la respuesta 'ticket'.
     // (La línea comentada 'ticket.uresponse.forEach' sugiere que la API quizás cambió de formato)
     ticket.data.forEach((t)=> { 
-        console.log(t.clienteID)
-        // Filtro del lado del cliente: solo procesa tickets que coincidan con el ID de la URL.
+        console.log(t.clienteID) // Muestra el ID del cliente de cada ticket
+
+        // Compara si el clienteID del ticket coincide con el ID leído de la URL
         if (t.clienteID == query.id) {
-            
-            // Este 'if' se ejecuta solo UNA VEZ, la primera vez que encontramos un ticket.
+
+            // Si es el primer ticket encontrado para este cliente...
             if (f==false) {
-                f=true; // Levanta la bandera: "encontramos al menos un ticket".
-                const hdr=["Cliente","ID","Motivo","Estado","Fecha"]; // Títulos de las columnas
-                let tr=document.createElement("tr"); // Crea la fila de cabecera <tr>
+                f=true; // Marca que ya se encontró al menos uno
+                // Define los encabezados de la tabla
+                const hdr=["Cliente","ID","Motivo","Estado","Fecha"];
+                // Crea una fila <tr> para los encabezados
+                let tr=document.createElement("tr");
                 tr.style.border="1px solid";
                 
                 // Recorre los títulos y crea una celda de cabecera <th> para cada uno
@@ -179,33 +174,32 @@ fetch(`${APIREST_URL}`,options)
                 });
                 table.appendChild(tr); // Añade la fila de cabecera completa a la tabla.
             }
-
-            // Prepara un array con los datos de la fila actual
+            // Define los datos que irán en la fila de este ticket
             const body=[t.clienteID,`${t.id}`,`${t.solucion}`,`${t.estado_solucion}`,`${t.ultimo_contacto}`];
-            
-            let trl=document.createElement("tr"); // Crea una fila <tr> para los datos
-            // Recorre los datos y crea una celda <td> para cada uno
+
+            // Crea una fila <tr> para los datos de este ticket
+            let trl=document.createElement("tr");
+            // Recorre los datos del ticket
             body.forEach((line) => {
+                // Crea una celda de datos <td>
                 let td=document.createElement("td");
                 td.style.border="1px solid";
-                td.innerText = line; // Pone el dato (ej: "Abierto")
+                td.innerText = line; // Le pone el dato del ticket
                 trl.appendChild(td); // Añade la celda <td> a la fila <tr>
             });
-            table.appendChild(trl); // Añade la fila de datos a la tabla.
+            table.appendChild(trl);    // Añade la fila de datos a la tabla               
         }
     });
-
-    // --- Muestra el resultado en la página ---
-
-    // Después de recorrer todos los tickets, revisa la bandera 'f'
+    // Después de recorrer todos los tickets...
+    // Si se encontró al menos un ticket (f es true)
     if (f) {
-        // Si 'f' es true (encontramos tickets),
-        console.log(table); // Muestra la tabla HTML final en la consola
-        HTMLResponse.appendChild(table); // Añade la tabla completa al <div id="app"> para que sea visible.
+        console.log(table);
+        // Añade la tabla completa al <div> con id="app" en el HTML
+        HTMLResponse.appendChild(table);
     } else {
-        // Si 'f' es false (no se encontraron tickets para este cliente),
+        // Si no se encontró ningún ticket para este cliente
         console.log("no tiene tickets");
-        // Busca el elemento con id "mensajes" y muestra un aviso al usuario.
+        // Muestra un mensaje de error en el <span> con id "mensajes"
         document.getElementById('mensajes').style.textAlign = "center";
         document.getElementById('mensajes').style.color="RED";
         document.getElementById("mensajes").innerHTML = "No hay tickets pendientes";
