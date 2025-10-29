@@ -198,5 +198,22 @@ formE1.addEventListener('submit', (event) => {
 				document.getElementById('resultado1').textContent =
 					'Error de login, intente nuevamente';                  
 			}
-		});
+		})
+		.catch((error) => {
+            console.error("Fallo la solicitud:", error);
+            
+            // La mayoría de las veces, un servidor apagado genera un 'TypeError' con fetch.
+            // Para ser más robustos, mostramos el error si no hay respuesta de red.
+            
+            document.getElementById('resultado1').style.color = 'RED';
+            document.getElementById('resultado1').style.textAlign = 'center';
+
+            // Muestra un mensaje claro para el usuario
+            document.getElementById('resultado1').textContent =
+                'Error de conexión con el servidor';
+
+            // Opcionalmente, puedes restaurar el mensaje de bienvenida para la consola.
+            console.log('El servidor Node.js (BACKEND) no respondió en ' + API);
+        }); // <--- Cierra el .catch()
 });
+;
