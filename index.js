@@ -120,7 +120,7 @@ app.post('/api/loginCliente', (req, res) => {
             return res.status(500).send(JSON.stringify({ response: "ERROR", message: "DB access error " + err }));
         }
 
-        // --- ESTE ES EL PUNTO CLAVE ---
+        // 
         if (data.Items.length !== 1) {
             // --- NUEVO LOG ---
             console.error(`DEBUG: 🚫 Usuario NO encontrado. Items.length: ${data.Items.length} para el email: ${email}`);
